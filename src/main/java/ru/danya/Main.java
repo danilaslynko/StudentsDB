@@ -82,7 +82,7 @@ public class Main {
             students.forEach(System.out::println);
             System.out.println("------------------------------------------------------------------------------");
         } catch (SQLException e) {
-            System.out.println("Error occurred during query execution");
+            System.out.println(e.getMessage());
         }
     }
 
@@ -93,7 +93,7 @@ public class Main {
             System.out.println(dbAccessProvider.deleteStudentById(id)
                     + " rows affected");
         } catch (SQLException e) {
-            System.out.println("Error occurred during query execution");
+            System.out.println(e.getMessage());
         }
     }
 
@@ -117,15 +117,12 @@ public class Main {
             }
         }
 
-        System.out.println("Enter student's digital unique number:");
-        long id = input.nextLong();
-
         try {
             System.out.println(dbAccessProvider.addNewEntry(new Student(
-                    id, name, surname, group, dateOfBirth
+                    name, surname, group, dateOfBirth
             )) + " rows affected");
         } catch (SQLException e) {
-            System.out.println("Error occurred during query execution");
+            System.out.println(e.getMessage());
         }
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 public class DatabaseAccessProvider {
 
     private Connection connection;
-
     private PreparedStatement addEntryStatement;
     private PreparedStatement deleteEntryStatement;
     private PreparedStatement getAllEntriesStatement;
@@ -22,7 +21,7 @@ public class DatabaseAccessProvider {
         statement.execute(
                 "create table if not exists students " +
                         "(" +
-                        "id bigint not null," +
+                        "id bigint not null auto_increment," +
                         "student_name varchar(32) not null," +
                         "surname varchar(32) not null," +
                         "academic_group varchar(16) not null," +
@@ -33,8 +32,8 @@ public class DatabaseAccessProvider {
         statement.close();
 
         addEntryStatement = connection.prepareStatement(
-                "insert into students (id, student_name, surname, academic_group, date_of_birth) " +
-                "values (?, ?, ?, ?, ?);"
+                "insert into students (student_name, surname, academic_group, date_of_birth) " +
+                "values (?, ?, ?, ?);"
         );
         deleteEntryStatement = connection.prepareStatement(
                 "delete from students where id=?;"
@@ -45,11 +44,10 @@ public class DatabaseAccessProvider {
     }
 
     public int addNewEntry(Student student) throws SQLException {
-        addEntryStatement.setLong(1, student.getId());
-        addEntryStatement.setString(2, student.getName());
-        addEntryStatement.setString(3, student.getSurname());
-        addEntryStatement.setString(4, student.getGroup());
-        addEntryStatement.setDate(5, student.getDateOfBirth());
+        addEntryStatement.setString(1, student.getName());
+        addEntryStatement.setString(2, student.getSurname());
+        addEntryStatement.setString(3, student.getGroup());
+        addEntryStatement.setDate(4, student.getDateOfBirth());
 
         return addEntryStatement.executeUpdate();
     }

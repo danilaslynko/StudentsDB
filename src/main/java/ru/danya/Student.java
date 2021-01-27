@@ -9,6 +9,13 @@ public class Student {
     private String group;
     private Date dateOfBirth;
 
+    public Student(String name, String surname, String group, Date dateOfBirth) {
+        this.name = name;
+        this.surname = surname;
+        this.group = group;
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public Student(long id, String name, String surname, String group, Date dateOfBirth) {
         this.id = id;
         this.name = name;
