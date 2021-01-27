@@ -7,10 +7,10 @@ import java.util.List;
 
 public class DatabaseAccessProvider implements Closeable {
 
-    private Connection connection;
-    private PreparedStatement addEntryStatement;
-    private PreparedStatement deleteEntryStatement;
-    private PreparedStatement getAllEntriesStatement;
+    private final Connection connection;
+    private final PreparedStatement addEntryStatement;
+    private final PreparedStatement deleteEntryStatement;
+    private final PreparedStatement getAllEntriesStatement;
 
     public DatabaseAccessProvider(String url,
                                   String username,

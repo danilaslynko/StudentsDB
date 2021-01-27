@@ -79,9 +79,9 @@ public class Main {
     private static void showAllEntries() {
         try {
             List<Student> students = dbAccessProvider.getAllEntries();
-            System.out.println("------------------------------------------------------------------------------");
+            System.out.println("------------------------------------------------------------------------------------");
             students.forEach(System.out::println);
-            System.out.println("------------------------------------------------------------------------------");
+            System.out.println("------------------------------------------------------------------------------------");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -91,8 +91,7 @@ public class Main {
         System.out.println("Enter student's digital unique number:");
         long id = input.nextLong();
         try {
-            System.out.println(dbAccessProvider.deleteStudentById(id)
-                    + " rows affected");
+            System.out.println(dbAccessProvider.deleteStudentById(id) + " rows affected");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -120,8 +119,7 @@ public class Main {
 
         try {
             System.out.println(dbAccessProvider.addNewEntry(new Student(
-                    name, surname, group, dateOfBirth
-            )) + " rows affected");
+                    name, surname, group, dateOfBirth)) + " rows affected");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
