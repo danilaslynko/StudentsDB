@@ -15,9 +15,10 @@ public class Main {
         String url;
         String username;
         String password;
+        boolean allowedToRewrite;
 
         System.out.println("Database should contain table 'students' with columns\n" +
-                "'id', 'name', 'surname', 'grup', 'date_of_birth'.\n" +
+                "'id', 'student_name', 'surname', 'academic_group', 'date_of_birth'.\n" +
                 "If table doesn't exist, it will be created automatically\n" +
                 "Enter DB URL:");
         url = input.next();
@@ -25,10 +26,12 @@ public class Main {
         username = input.next();
         System.out.println("Enter password:");
         password = input.next();
+        System.out.println("Rewrite table 'students' if exists but doesn't match pattern? y/n, no by default:");
+        allowedToRewrite = "y".compareToIgnoreCase(input.next()) == 0;
 
         try {
             dbAccessProvider =
-                    new DatabaseAccessProvider(url, username, password);
+                    new DatabaseAccessProvider(url, username, password, allowedToRewrite);
             System.out.println("Connected to database.");
             while (true) {
                 if (chooseOps()) {

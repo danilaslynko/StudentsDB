@@ -11,33 +11,14 @@ public class DatabaseAccessProvider implements Closeable {
     private final PreparedStatement addEntryStatement;
     private final PreparedStatement deleteEntryStatement;
     private final PreparedStatement getAllEntriesStatement;
+    private final boolean allowedToRewrite;
 
     public DatabaseAccessProvider(String url,
                                   String username,
-                                  String password)
-            throws SQLException {
+                                  String password,
+                                  boolean allowedToRewrite) throws SQLException {
+        this.allowedToRewrite = allowedToRewrite;
         connection = DriverManager.getConnection(url, username, password);
-        Statement statement = connection.createStatement();
-
-        // проверяем таблицу на правильность, создаем ее, если ее нет.
-        // если таблица существует, но ее структура не соответствует образцу, выкидываем исключение
-        int tableMatchResult = tableMatches(statement);
-        if (tableMatchResult == 0) {
-            throw new SQLException("Table 'students' exist, but doesn't match pattern.\n" +
-                    "Application will be closed to prevent data loss.");
-        }
-        if (tableMatchResult == -1) {
-            statement.execute("create table students " +
-                    "(" +
-                    "id bigint not null auto_increment," +
-                    "student_name varchar(32) not null," +
-                    "surname varchar(32) not null," +
-                    "academic_group varchar(16) not null," +
-                    "date_of_birth date not null," +
-                    "primary key (id)" +
-                    ");");
-        }
-        statement.close();
 
         addEntryStatement = connection.prepareStatement(
                 "insert into students (student_name, surname, academic_group, date_of_birth) " +
@@ -49,6 +30,35 @@ public class DatabaseAccessProvider implements Closeable {
         getAllEntriesStatement = connection.prepareStatement(
                 "select * from students;"
         );
+        prepareTable();
+    }
+
+    private void prepareTable() throws SQLException {
+        Statement statement = connection.createStatement();
+        // проверяем таблицу на правильность, создаем ее, если ее нет.
+        // если таблица существует, но ее структура не соответствует образцу, выкидываем исключение
+        int tableMatchResult = tableMatches(statement);
+        if (tableMatchResult == 0) {
+            if (this.allowedToRewrite) {
+                statement.execute("drop table students;");
+                tableMatchResult = -1;
+            } else {
+                close();
+
+                throw new SQLException("Database connection was closed.");
+            }
+        }
+        if (tableMatchResult == -1) {
+            statement.execute("create table students " +
+                   "(id bigint not null auto_increment," +
+                   "student_name varchar(32) not null," +
+                   "surname varchar(32) not null," +
+                   "academic_group varchar(16) not null," +
+                   "date_of_birth date not null," +
+                   "primary key (id));"
+            );
+        }
+        statement.close();
     }
 
     // метод проверяет, есть ли в БД таблица students и соответствует ли она дефолтной структуре.
@@ -102,13 +112,14 @@ public class DatabaseAccessProvider implements Closeable {
         ResultSet studentsResultSet = getAllEntriesStatement.executeQuery();
 
         while (studentsResultSet.next()) {
-            students.add(new Student(
-                    studentsResultSet.getLong("id"),
+            Student studentFromDB = new Student(
                     studentsResultSet.getString("student_name"),
                     studentsResultSet.getString("surname"),
                     studentsResultSet.getString("academic_group"),
-                    studentsResultSet.getDate("date_of_birth")
-            ));
+                    studentsResultSet.getDate("date_of_birth"));
+            studentFromDB.setId(studentsResultSet.getLong("id"));
+
+            students.add(studentFromDB);
         }
 
         studentsResultSet.close();

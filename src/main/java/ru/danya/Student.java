@@ -2,6 +2,7 @@ package ru.danya;
 
 import java.sql.Date;
 
+// POJO студента. попытка в ORM.
 public class Student {
     private long id;
     private String name;
@@ -9,6 +10,8 @@ public class Student {
     private String group;
     private Date dateOfBirth;
 
+    // id в таблице ставим на автоинкремент, поэтому его нет смысла прописывать в конструкторе;
+    // при получении записи из БД проще вставить его сеттером.
     public Student(String name, String surname, String group, Date dateOfBirth) {
         this.name = name;
         this.surname = surname;
@@ -16,12 +19,8 @@ public class Student {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Student(long id, String name, String surname, String group, Date dateOfBirth) {
+    public void setId(long id) {
         this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.group = group;
-        this.dateOfBirth = dateOfBirth;
     }
 
     public long getId() {
