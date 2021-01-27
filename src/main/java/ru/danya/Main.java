@@ -30,13 +30,14 @@ public class Main {
             dbAccessProvider =
                     new DatabaseAccessProvider(url, username, password);
             System.out.println("Connected to database.");
+            while (true) {
+                if (chooseOps()) {
+                    dbAccessProvider.close();
+                    return;
+                }
+            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-            return;
-        }
-
-        while (true) {
-            if (chooseOps()) return;
         }
     }
 
