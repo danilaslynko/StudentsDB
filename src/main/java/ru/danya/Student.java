@@ -46,7 +46,7 @@ public class Student {
     @Override
     public String toString() {
         return String.format(
-                "%-5d %-32s %-32s %-16s %-12s",
+                "%-5d %-24s %-24s %-16s %-12s",
                 id,
                 name,
                 surname,

@@ -1,17 +1,18 @@
 package ru.danya;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseAccessProvider implements Closeable {
 
-    private final Connection connection;
-    private final PreparedStatement addEntryStatement;
-    private final PreparedStatement deleteEntryStatement;
-    private final PreparedStatement getAllEntriesStatement;
-    private final boolean allowedToRewrite;
+    private Connection connection;
+    private PreparedStatement addEntryStatement;
+    private PreparedStatement deleteEntryStatement;
+    private PreparedStatement getAllEntriesStatement;
+    private boolean allowedToRewrite;
 
     public DatabaseAccessProvider(String url,
                                   String username,
@@ -129,12 +130,21 @@ public class DatabaseAccessProvider implements Closeable {
     @Override
     public void close() {
         try {
-            connection.close();
-            addEntryStatement.close();
-            deleteEntryStatement.close();
-            getAllEntriesStatement.close();
-        } catch (SQLException e) {
+            disconnect(connection);
+            disconnect(addEntryStatement);
+            disconnect(deleteEntryStatement);
+            disconnect(getAllEntriesStatement);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void disconnect(AutoCloseable closeable)
+            throws Exception {
+        if (closeable != null) {
+            closeable.close();
+            closeable = null;
+        }
+        else throw new IllegalStateException("Connection or statement is already closed");
     }
 }

@@ -36,6 +36,7 @@ public class Main {
             while (true) {
                 if (chooseOps()) {
                     dbAccessProvider.close();
+                    input.close();
                     return;
                 }
             }
@@ -53,8 +54,8 @@ public class Main {
                         "'exit' to close the application."
         );
 
-        String[] command = input.next().split(" ");
-        switch (command[0]) {
+        String command = input.next();
+        switch (command) {
             case "add": {
                 addEntry();
                 break;
@@ -119,7 +120,6 @@ public class Main {
                 System.out.println("Invalid date format.");
             }
         }
-
         try {
             System.out.println(dbAccessProvider.addNewEntry(new Student(
                     name, surname, group, dateOfBirth)) + " rows affected");
